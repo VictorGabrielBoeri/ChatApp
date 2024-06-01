@@ -4,11 +4,10 @@ import { Link, Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
-// import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store';
 import { TouchableOpacity, View } from 'react-native';
 import Colors from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import ExpoSecureStore from 'expo-secure-store'; // Importe a biblioteca correta aqui
 
 const CLERK_PUBLISHABLE_KEY = 'pk_test_c2V0dGxpbmctbWF5Zmx5LTMuY2xlcmsuYWNjb3VudHMuZGV2JA';
 
@@ -16,14 +15,14 @@ const CLERK_PUBLISHABLE_KEY = 'pk_test_c2V0dGxpbmctbWF5Zmx5LTMuY2xlcmsuYWNjb3Vud
 const tokenCache = {
   async getToken(key: string) {
     try {
-      return await ExpoSecureStore.default.getValueWithKeyAsync(key);
+      return SecureStore.getItemAsync(key);
     } catch (err) {
       return null;
     }
   },
   async saveToken(key: string, value: string) {
     try {
-      return await ExpoSecureStore.default.setValueWithKeyAsync(key, value);
+      return SecureStore.setItemAsync(key, value);
     } catch (err) {
       return;
     }
@@ -79,7 +78,7 @@ const InitialLayout = () => {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen
         name="otp"
-        options={{ headerTitle: 'Digite seu telefone', headerBackVisible: false }}
+        options={{ headerTitle: 'Enter Your Phone Number', headerBackVisible: false }}
       />
       <Stack.Screen
         name="verify/[phone]"
@@ -120,7 +119,7 @@ const InitialLayout = () => {
 
 const RootLayoutNav = () => {
   return (
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!} tokenCache={tokenCache}>
       <InitialLayout />
     </ClerkProvider>
   );
